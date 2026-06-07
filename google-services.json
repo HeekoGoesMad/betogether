@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "969289430171",
+    "project_id": "betogether-154f6",
+    "storage_bucket": "betogether-154f6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:969289430171:android:bc82522a1c6209bb04423e",
+        "android_client_info": {
+          "package_name": "com.example.betogether"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "969289430171-fvotpnero7mg4vp0hpti2hhikugkgeek.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.betogether",
+            "certificate_hash": "a3b46935ecf936131dd41fe3293a9815206c50d2"
+          }
+        },
+        {
+          "client_id": "969289430171-88l23vt42amjog9pc4e29eqfdjn0fj6n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgrscrXP6k8f5XAAxbNaZja0la0b89D18"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "969289430171-88l23vt42amjog9pc4e29eqfdjn0fj6n.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "969289430171-m0ujjhr7k4so6eqrn55kgrdpvu3nn5so.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.betogether"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,81 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ────────────────────────────────────────
+    // USERS
+    // ────────────────────────────────────────
+    match /users/{userId} {
+      // Any authenticated user can read any profile (needed for friend search, map, etc.)
+      allow read: if request.auth != null;
+
+      // A user can create/update/delete their OWN document
+      allow write: if request.auth != null && request.auth.uid == userId;
+
+      // Another user can update ONLY the 'friends' field of this document,
+      // and only to add or remove themselves (their own UID).
+      allow update: if request.auth != null
+        && request.auth.uid != userId
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['friends'])
+        && (
+          // Adding own UID to the friends list
+          request.resource.data.get('friends', []).toSet().difference(
+            resource.data.get('friends', []).toSet()
+          ) == [request.auth.uid].toSet()
+          ||
+          // Removing own UID from the friends list
+          resource.data.get('friends', []).toSet().difference(
+            request.resource.data.get('friends', []).toSet()
+          ) == [request.auth.uid].toSet()
+        );
+    }
+
+    // ────────────────────────────────────────
+    // FRIEND REQUESTS
+    // ────────────────────────────────────────
+    match /friendRequests/{requestId} {
+      // Sender or receiver can read
+      allow read: if request.auth != null && (
+        request.auth.uid == resource.data.fromUid ||
+        request.auth.uid == resource.data.toUid
+      );
+
+      // Only sender can create, and must set their own UID as fromUid
+      allow create: if request.auth != null
+        && request.auth.uid == request.resource.data.fromUid;
+
+      // Sender or receiver can update (accept/reject) or delete
+      allow update, delete: if request.auth != null && (
+        request.auth.uid == resource.data.fromUid ||
+        request.auth.uid == resource.data.toUid
+      );
+    }
+
+    // ────────────────────────────────────────
+    // STORIES
+    // ────────────────────────────────────────
+    match /stories/{storyId} {
+      // Any authenticated user can read stories.
+      // Friend-only filtering is enforced client-side via the query
+      // (whereIn on ownerIds from the friends list).
+      allow read: if request.auth != null;
+
+      // Only the owner can create their own story
+      allow create: if request.auth != null
+        && request.auth.uid == request.resource.data.ownerId;
+
+      // Owner can update (e.g. delete viewedBy) or any authenticated user
+      // can mark a story as viewed (addToSet on viewedBy field)
+      allow update: if request.auth != null && (
+        request.auth.uid == resource.data.ownerId
+        ||
+        // Only the viewedBy field is changing, and it is being expanded
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['viewedBy'])
+      );
+
+      // Only owner can delete
+      allow delete: if request.auth != null
+        && request.auth.uid == resource.data.ownerId;
+    }
+  }
+}
